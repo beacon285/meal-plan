@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meal Plan — Week of June 27</title>
+  <style>
+    :root {
+      --cream: #faf8f3;
+      --warm: #f5f0e8;
+      --rust: #c45c26;
+      --rust-light: #e8733a;
+      --green: #3d6b4f;
+      --green-light: #5a8f6e;
+      --text: #2c2416;
+      --muted: #7a6e5f;
+      --border: #e2d9cc;
+      --white: #ffffff;
+      --shadow: 0 2px 12px rgba(44,36,22,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Georgia', serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--green);
+      color: var(--white);
+      padding: 2.5rem 1.5rem 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: normal;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.4rem;
+    }
+    header p {
+      opacity: 0.82;
+      font-size: 0.95rem;
+      font-style: italic;
+    }
+    .badges {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1.2rem;
+    }
+    .badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: var(--white);
+      border-radius: 2rem;
+      padding: 0.3rem 0.9rem;
+      font-size: 0.82rem;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    /* ── Nav ── */
+    nav {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    nav::-webkit-scrollbar { display: none; }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 0.85rem 1rem;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    nav a:hover { color: var(--rust); border-bottom-color: var(--rust); }
+
+    /* ── Layout ── */
+    main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+    section { margin-bottom: 3.5rem; }
+    section h2 {
+      font-size: 1.25rem;
+      font-weight: normal;
+      color: var(--green);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── Week Overview Table ── */
+    .overview-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.88rem;
+    }
+    .overview-table th {
+      background: var(--green);
+      color: var(--white);
+      padding: 0.6rem 0.9rem;
+      text-align: left;
+      font-weight: 500;
+    }
+    .overview-table td {
+      padding: 0.65rem 0.9rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .overview-table tr:nth-child(even) td { background: var(--warm); }
+    .overview-table .day { font-weight: 600; white-space: nowrap; }
+    .stars { color: #c8972a; font-size: 0.85em; }
+    .out { color: var(--muted); font-style: italic; }
+
+    /* ── Freshness Banner ── */
+    .freshness-box {
+      background: #fff8ee;
+      border: 1px solid #e8d49a;
+      border-left: 4px solid #c8972a;
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.88rem;
+      margin-top: 1.25rem;
+    }
+    .freshness-box strong { color: var(--rust); }
+    .freshness-box ul { margin: 0.5rem 0 0 1.2rem; }
+    .freshness-box li { margin-bottom: 0.3rem; }
+
+    /* ── Recipe Cards ── */
+    .recipe-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .recipe-header {
+      background: var(--rust);
+      color: var(--white);
+      padding: 1rem 1.4rem;
+    }
+    .recipe-header .day-label {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.85;
+      margin-bottom: 0.2rem;
+    }
+    .recipe-header h3 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      margin-bottom: 0.35rem;
+    }
+    .recipe-meta {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.8rem;
+      opacity: 0.88;
+    }
+    .recipe-note {
+      background: #fffbf0;
+      border-left: 3px solid #c8972a;
+      padding: 0.6rem 1rem;
+      font-style: italic;
+      font-size: 0.88rem;
+      color: #6b5a2e;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+    .recipe-body {
+      padding: 1.25rem 1.4rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+    @media (max-width: 600px) {
+      .recipe-body { grid-template-columns: 1fr; }
+    }
+    .recipe-body h4 {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .recipe-body ul, .recipe-body ol {
+      font-size: 0.9rem;
+      padding-left: 1.1rem;
+    }
+    .recipe-body li { margin-bottom: 0.4rem; }
+    .recipe-body ol { padding-left: 1.2rem; }
+    .recipe-body .instructions { grid-column: 1 / -1; }
+
+    .lunch-tip {
+      background: var(--warm);
+      border-top: 1px solid var(--border);
+      padding: 0.7rem 1.4rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── Grocery List ── */
+    .grocery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+    .grocery-section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .grocery-section-header {
+      background: var(--green);
+      color: var(--white);
+      padding: 0.55rem 1rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+    .grocery-section ul {
+      list-style: none;
+      padding: 0.5rem 0;
+    }
+    .grocery-section li {
+      padding: 0.35rem 1rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.87rem;
+      border-bottom: 1px solid #f0ece5;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .grocery-section li:last-child { border-bottom: none; }
+    .grocery-section li:hover { background: var(--warm); }
+    .grocery-section li.checked {
+      color: var(--muted);
+      text-decoration: line-through;
+      background: #f5f5f2;
+    }
+    .checkbox {
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 3px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .checked .checkbox {
+      background: var(--green-light);
+      border-color: var(--green-light);
+      color: white;
+      font-size: 10px;
+    }
+    .note-tag {
+      display: inline-block;
+      background: #fef3e2;
+      color: #8b5e1a;
+      border-radius: 3px;
+      padding: 0 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* ── Prep Guide ── */
+    .prep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1.25rem; }
+    .prep-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .prep-card-header {
+      background: var(--rust);
+      color: white;
+      padding: 0.55rem 1rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .prep-card ul { list-style: none; padding: 0.75rem 1rem; }
+    .prep-card li {
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.87rem;
+      padding: 0.3rem 0;
+      border-bottom: 1px solid #f0ece5;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .prep-card li:last-child { border-bottom: none; }
+    .prep-card li::before { content: "·"; color: var(--rust); font-weight: bold; flex-shrink: 0; }
+
+    /* ── Budget ── */
+    .budget-bar-wrap { margin: 0.5rem 0 1.25rem; }
+    .budget-bar {
+      height: 12px;
+      background: var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .budget-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--green-light));
+      border-radius: 6px;
+      width: 66%;
+    }
+    .budget-label {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Meal Plan — Week of June 27</h1>
+  <p>NYT Cooking · Seasonal · Under 25 min prep</p>
+  <div class="badges">
+    <span class="badge">3 adults</span>
+    <span class="badge">Dinner + 3 lunches each night</span>
+    <span class="badge">Est. $155–175</span>
+    <span class="badge">No red meat</span>
+  </div>
+</header>
+
+<nav>
+  <a href="#overview">Overview</a>
+  <a href="#recipes">Recipes</a>
+  <a href="#grocery">Grocery List</a>
+  <a href="#prep">Prep Guide</a>
+</nav>
+
+<main>
+
+  <!-- ── OVERVIEW ── -->
+  <section id="overview">
+    <h2>Weekly Overview</h2>
+    <table class="overview-table">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Dinner</th>
+          <th>Rating</th>
+          <th>Serves</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="day">Saturday</td>
+          <td>Pesce all'Acqua Pazza</td>
+          <td><span class="stars">★★★★★</span></td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td class="day">Sunday</td>
+          <td>Sticky Miso Salmon Bowl</td>
+          <td><span class="stars">★★★★★</span> Top 5 most-rated 2024</td>
+          <td>3 + 3 lunches</td>
+        </tr>
+        <tr>
+          <td class="day">Monday</td>
+          <td>Creamy, Spicy Tomato Beans &amp; Greens</td>
+          <td><span class="stars">★★★★★</span> #4 most-rated 2024</td>
+          <td>3 + 3 lunches</td>
+        </tr>
+        <tr>
+          <td class="day">Tuesday</td>
+          <td>One-Pot Chicken &amp; Rice with Caramelized Lemon</td>
+          <td><span class="stars">★★★★★</span> #1 most-rated 2024</td>
+          <td>3 + 4 lunches</td>
+        </tr>
+        <tr>
+          <td class="day">Wednesday</td>
+          <td>Lemony Shrimp and Bean Stew</td>
+          <td><span class="stars">★★★★★</span> NYT all-time top 50</td>
+          <td>4 + 3 lunches</td>
+        </tr>
+        <tr>
+          <td class="day">Thursday</td>
+          <td class="out">Going out</td>
+          <td>—</td><td>—</td>
+        </tr>
+        <tr>
+          <td class="day">Fri–Sun</td>
+          <td class="out">Out of town</td>
+          <td>—</td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="freshness-box">
+      <strong>🧊 Freshness &amp; freezer notes</strong>
+      <ul>
+        <li><strong>Saturday fish:</strong> buy and cook same day</li>
+        <li><strong>Salmon:</strong> refrigerate, cook Sunday</li>
+        <li><strong>Chicken thighs:</strong> freeze immediately Saturday → move to fridge Sunday night</li>
+        <li><strong>Shrimp:</strong> freeze immediately Saturday → move to fridge Tuesday night</li>
+      </ul>
+    </div>
+
+    <div class="budget-bar-wrap" style="margin-top:1.5rem">
+      <strong style="font-family:sans-serif;font-size:0.85rem">Budget</strong>
+      <div class="budget-bar" style="margin-top:0.4rem"><div class="budget-fill"></div></div>
+      <div class="budget-label"><span>Est. $155–175</span><span>Budget: $250</span></div>
+    </div>
+  </section>
+
+  <!-- ── RECIPES ── -->
+  <section id="recipes">
+    <h2>Recipes</h2>
+
+    <!-- Saturday -->
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="day-label">Saturday</div>
+        <h3>Pesce all'Acqua Pazza</h3>
+        <div class="recipe-meta">Fish with White Wine &amp; Cherry Tomatoes · 15 min prep · 2 servings</div>
+      </div>
+      <div class="recipe-body">
+        <div>
+          <h4>Ingredients</h4>
+          <ul>
+            <li>2 fish fillets (cod, halibut, or snapper, ~6–8 oz each)</li>
+            <li>1 pint cherry tomatoes, halved</li>
+            <li>½ cup dry white wine</li>
+            <li>4 garlic cloves, smashed</li>
+            <li>3 tbsp olive oil</li>
+            <li>Small bunch fresh basil, torn</li>
+            <li>1 lemon, for serving</li>
+            <li>Crusty bread, for serving</li>
+          </ul>
+        </div>
+        <div class="instructions">
+          <h4>Instructions</h4>
+          <ol>
+            <li>Heat olive oil in a large skillet over medium. Add garlic; cook 2 min until golden.</li>
+            <li>Add cherry tomatoes; cook, pressing gently, until they burst, ~4 min. Season with salt.</li>
+            <li>Pour in white wine; bring to a simmer and bubble 1 min.</li>
+            <li>Nestle fish into the broth; spoon broth over top. Cover loosely and cook 5–7 min until fish flakes.</li>
+            <li>Scatter torn basil over. Serve with lemon wedges and crusty bread.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sunday -->
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="day-label">Sunday</div>
+        <h3>Sticky Miso Salmon Bowl</h3>
+        <div class="recipe-meta">20 min prep · NYT Top 5 most-rated 2024 · 6 servings (dinner + 3 lunches)</div>
+      </div>
+      <div class="recipe-note">Move chicken thighs from freezer to fridge tonight to thaw for Tuesday.</div>
+      <div class="recipe-body">
+        <div>
+          <h4>Ingredients</h4>
+          <ul>
+            <li>1½ lbs skinless salmon fillet, cut into 6 portions</li>
+            <li>3 tbsp white miso paste</li>
+            <li>1½ tbsp soy sauce (low sodium)</li>
+            <li>1½ tbsp honey</li>
+            <li>1 tsp fresh ginger, finely grated</li>
+            <li>1 tsp grapefruit zest (or lime zest)</li>
+            <li>2 cups sushi rice</li>
+            <li>3 tbsp unsalted butter</li>
+            <li>3 scallions, thinly sliced</li>
+            <li>2 avocados, sliced (dinner only)</li>
+            <li>3 nori sheets, cut into strips</li>
+          </ul>
+        </div>
+        <div class="instructions">
+          <h4>Instructions</h4>
+          <ol>
+            <li>Cook sushi rice per package. While hot, stir in butter and half the scallions.</li>
+            <li>Whisk miso, soy sauce, honey, ginger, and grapefruit zest. Coat salmon all over.</li>
+            <li>Broil on a foil-lined sheet pan 6–8 min until glaze is caramelized. Watch closely — honey burns.</li>
+            <li>Divide rice into bowls. Top with salmon, avocado, nori, and remaining scallions.</li>
+            <li>Lunches: store rice and salmon separately; add fresh avocado when serving.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="lunch-tip">Lunch tip: skip avocado in packed lunches — it won't keep. Add fresh when serving.</div>
+    </div>
+
+    <!-- Monday -->
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="day-label">Monday · Vegetarian</div>
+        <h3>Creamy, Spicy Tomato Beans &amp; Greens</h3>
+        <div class="recipe-meta">20 min prep · NYT #4 most-rated 2024 · 6 servings (dinner + 3 lunches)</div>
+      </div>
+      <div class="recipe-body">
+        <div>
+          <h4>Ingredients</h4>
+          <ul>
+            <li>2 cans (15 oz) cannellini beans, drained (reserve liquid from 1 can)</li>
+            <li>½ cup sun-dried tomatoes in oil, roughly chopped (+ 1 tbsp jar oil)</li>
+            <li>1 cup crushed tomatoes or tomato purée</li>
+            <li>½ cup heavy cream</li>
+            <li>1 medium onion, diced</li>
+            <li>4 garlic cloves, minced</li>
+            <li>½ tsp crushed red pepper flakes</li>
+            <li>4 oz baby arugula</li>
+            <li>3 oz Parmesan, grated</li>
+            <li>½ cup panko breadcrumbs</li>
+            <li>2 tbsp olive oil</li>
+          </ul>
+        </div>
+        <div class="instructions">
+          <h4>Instructions</h4>
+          <ol>
+            <li>Heat 1 tbsp sun-dried tomato oil in a large skillet over medium. Cook onion 5 min; add garlic and red pepper, 1 min more.</li>
+            <li>Add sun-dried tomatoes, crushed tomatoes, beans, cream, and reserved bean liquid. Simmer 8–10 min until slightly thickened.</li>
+            <li>Toast panko in 2 tbsp olive oil 3–4 min until golden; stir in half the Parmesan off heat.</li>
+            <li>Stir arugula into beans and wilt 1 min. Top with remaining Parmesan and panko crumb.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="lunch-tip">Lunch tip: store without panko (goes soggy). Toast fresh panko at lunch — takes 3 min.</div>
+    </div>
+
+    <!-- Tuesday -->
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="day-label">Tuesday</div>
+        <h3>One-Pot Chicken &amp; Rice with Caramelized Lemon</h3>
+        <div class="recipe-meta">20 min prep + 35 min oven · NYT #1 most-rated 2024 · 7 servings (dinner + 4 lunches)</div>
+      </div>
+      <div class="recipe-note">Preheat oven to 400°F before you start. The oven does the work — dinner is mostly hands-off.</div>
+      <div class="recipe-body">
+        <div>
+          <h4>Ingredients</h4>
+          <ul>
+            <li>2½ lbs bone-in, skin-on chicken thighs</li>
+            <li>3 lemons (2 sliced into rounds, 1 for wedges)</li>
+            <li>2 cups long-grain white rice</li>
+            <li>3½ cups chicken broth</li>
+            <li>¾ cup kalamata olives, pitted</li>
+            <li>4 garlic cloves, minced</li>
+            <li>3 tbsp unsalted butter</li>
+            <li>1 tsp dried oregano</li>
+            <li>Crushed red pepper flakes</li>
+            <li>Fresh parsley, for serving</li>
+          </ul>
+        </div>
+        <div class="instructions">
+          <h4>Instructions</h4>
+          <ol>
+            <li>Preheat oven to 400°F. Pat chicken dry; season with salt, pepper, and oregano.</li>
+            <li>Brown chicken skin-side down in 1 tbsp butter over medium-high, 5–6 min. Transfer to a plate.</li>
+            <li>Cook lemon slices in drippings, 2–3 min per side, until caramelized. Transfer.</li>
+            <li>Add remaining butter and garlic; cook 30 sec. Add rice; stir to coat. Pour in broth and olives; bring to a simmer.</li>
+            <li>Nestle chicken skin-side up on rice. Lay caramelized lemons over top. Roast 30–35 min until rice is cooked and chicken reaches 165°F.</li>
+            <li>Scatter parsley over. Serve with lemon wedges.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="lunch-tip">Tuesday night: move shrimp from freezer to fridge to thaw for Wednesday.</div>
+    </div>
+
+    <!-- Wednesday -->
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="day-label">Wednesday</div>
+        <h3>Lemony Shrimp and Bean Stew</h3>
+        <div class="recipe-meta">25 min prep · NYT all-time top 50 · 7–8 servings (dinner + 3 lunches)</div>
+      </div>
+      <div class="recipe-note">Shrimp should be fully thawed (moved from freezer Tuesday night). Pick up crusty bread this morning.</div>
+      <div class="recipe-body">
+        <div>
+          <h4>Ingredients</h4>
+          <ul>
+            <li><em>Shrimp marinade:</em></li>
+            <li>2 lbs large shrimp, peeled &amp; deveined</li>
+            <li>2 tsp lemon zest · 4 garlic cloves, minced</li>
+            <li>½ tsp smoked paprika · salt &amp; pepper</li>
+            <li style="margin-top:0.5rem"><em>Stew:</em></li>
+            <li>2 tbsp olive oil</li>
+            <li>3 large onions, sliced into half-moons</li>
+            <li>4 garlic cloves, thinly sliced</li>
+            <li>¾ cup dry white wine</li>
+            <li>5 cups chicken broth</li>
+            <li>4 cans (15 oz) cannellini beans, <strong>undrained</strong></li>
+            <li>3 tbsp lemon juice · 2 tsp lemon zest</li>
+            <li>4 tbsp unsalted butter</li>
+            <li>Fresh parsley &amp; chives</li>
+          </ul>
+        </div>
+        <div class="instructions">
+          <h4>Instructions</h4>
+          <ol>
+            <li>Toss shrimp with lemon zest, minced garlic, paprika, salt, and pepper. Set aside.</li>
+            <li>Heat olive oil in a large pot over medium. Cook onions 6–8 min until soft and golden. Add sliced garlic, 1 min more.</li>
+            <li>Pour in wine; reduce by half, ~2 min.</li>
+            <li>Add broth and undrained beans. Simmer 8 min until slightly thickened.</li>
+            <li>Add shrimp; simmer gently 3–4 min until just pink and cooked through.</li>
+            <li>Stir in lemon juice, lemon zest, and butter until melted. Top with parsley and chives. Serve with crusty bread.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GROCERY LIST ── -->
+  <section id="grocery">
+    <h2>Saturday Grocery List</h2>
+    <p style="font-family:sans-serif;font-size:0.88rem;color:var(--muted);margin-bottom:1.25rem">Shop Saturday. Use fish tonight. Freeze chicken and shrimp immediately when home. Click items to check them off.</p>
+
+    <div class="grocery-grid">
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Fish &amp; Seafood</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2 fresh fish fillets (cod, halibut, or snapper, ~6–8 oz each) <span class="note-tag">cook Sat</span></span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1½ lbs skinless salmon fillet <span class="note-tag">refrigerate, cook Sun</span></span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2 lbs large shrimp, peeled &amp; deveined <span class="note-tag">freeze → thaw Tue night</span></span></li>
+        </ul>
+      </div>
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Poultry</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2½ lbs bone-in, skin-on chicken thighs <span class="note-tag">freeze → thaw Sun night</span></span></li>
+        </ul>
+      </div>
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Produce</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 pint cherry tomatoes</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>8 lemons</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 grapefruit (or substitute lime)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2 avocados</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>3 large onions</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2 heads garlic</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 bunch scallions</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 small knob fresh ginger</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>4 oz bag baby arugula</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Fresh basil (1 bunch)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Fresh parsley (1 bunch)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Fresh chives (1 bunch)</span></li>
+        </ul>
+      </div>
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Dairy</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Parmesan, 3–4 oz</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Unsalted butter</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>½ cup heavy cream</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2 cartons milk</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 carton plain yogurt</span></li>
+        </ul>
+      </div>
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Dry Goods &amp; Pantry</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Sushi rice (short-grain, 2 cups)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>3 nori sheets</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Long-grain white rice (2 cups)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>6 cans (15 oz) cannellini beans</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>½ cup sun-dried tomatoes in oil</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 can (15 oz) crushed tomatoes</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>½ cup panko breadcrumbs</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Kalamata olives (jar, ~¾ cup)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>White miso paste (small container)</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Low-sodium soy sauce</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Honey</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 bottle dry white wine</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>2 cartons (32 oz) chicken broth</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Smoked or sweet paprika</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Breakfast cereal</span></li>
+        </ul>
+      </div>
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Buy Wednesday Morning</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>1 loaf crusty bread</span></li>
+        </ul>
+      </div>
+
+      <div class="grocery-section">
+        <div class="grocery-section-header">Check Pantry First</div>
+        <ul>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Olive oil</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Dried oregano</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Red pepper flakes</span></li>
+          <li onclick="toggle(this)"><span class="checkbox"></span><span>Salt &amp; black pepper</span></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── PREP GUIDE ── -->
+  <section id="prep">
+    <h2>Prep Guide</h2>
+    <p style="font-family:sans-serif;font-size:0.88rem;color:var(--muted);margin-bottom:1.25rem">~25 minutes of Sunday prep sets up the whole week.</p>
+
+    <div class="prep-grid">
+      <div class="prep-card">
+        <div class="prep-card-header">Saturday · When You Get Home</div>
+        <ul>
+          <li>Put chicken thighs and shrimp in the freezer immediately</li>
+        </ul>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-header">Sunday Prep (~25 min)</div>
+        <ul>
+          <li>Mince all garlic for Mon–Wed (~16 cloves). Store in a small jar in the fridge.</li>
+          <li>Dice 1 onion for Monday; slice 2 onions into half-moons for Wednesday. Store separately.</li>
+          <li>Basil: trim stems, store in a glass of water on the counter. Parsley &amp; chives: wrap in damp paper towels, fridge.</li>
+          <li>Move chicken from freezer to fridge to thaw for Tuesday.</li>
+        </ul>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-header">Monday (~20 min)</div>
+        <ul>
+          <li>Sauté onion, add beans and tomatoes, stir in cream, wilt arugula</li>
+          <li>Toast panko fresh (3 min) — do not store with dish</li>
+          <li>Serve with bread</li>
+        </ul>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-header">Tuesday (~20 min prep + 35 min oven)</div>
+        <ul>
+          <li>Preheat oven to 400°F before starting</li>
+          <li>Brown chicken, caramelize lemon, add rice and broth, into the oven</li>
+          <li>Use oven time to relax — mostly hands-off</li>
+          <li>Tonight: move shrimp from freezer to fridge</li>
+        </ul>
+      </div>
+      <div class="prep-card">
+        <div class="prep-card-header">Wednesday (~25 min)</div>
+        <ul>
+          <li>Marinate shrimp (5 min), soften onions (8 min)</li>
+          <li>Add wine and broth, simmer beans (8 min), cook shrimp (4 min)</li>
+          <li>Pick up crusty bread this morning</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Recipes from <a href="https://cooking.nytimes.com" style="color:var(--rust)">NYT Cooking</a> · Ratings based on NYT Cooking's 2024 Top Recipes &amp; all-time top 50
+</footer>
+
+<script>
+  function toggle(el) {
+    el.classList.toggle('checked');
+    if (el.classList.contains('checked')) {
+      el.querySelector('.checkbox').textContent = '✓';
+    } else {
+      el.querySelector('.checkbox').textContent = '';
+    }
+  }
+</script>
+</body>
+</html>
